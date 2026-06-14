@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>My Profile - ICC PrintHub</title>
+    <link rel="icon" href="https://indiacybercafe.com/wp-content/uploads/2026/06/ICC-PrintHub-Icon-logo.png" type="image/png"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#201b10",
+                        "tertiary-fixed-dim": "#e9bf93",
+                        "surface-container": "#f7eddb",
+                        "surface-container-high": "#f2e7d5",
+                        "surface-container-highest": "#ece1d0",
+                        "tertiary": "#2b1700",
+                        "surface-dim": "#e3d9c7",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#fff8f1",
+                        "surface-container-low": "#fdf2e0",
+                        "primary-fixed": "#ffdad6",
+                        "on-tertiary-fixed": "#2b1700",
+                        "on-primary-fixed-variant": "#603e3a",
+                        "text-primary": "#472825",
+                        "outline": "#827472",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#d4c2c0",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#353024",
+                        "light-cream": "#FDE4BC",
+                        "surface": "#fff8f1",
+                        "secondary": "#735850",
+                        "surface-glass": "rgba(255, 244, 226, 0.7)",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#201b10",
+                        "text-secondary": "#96786F",
+                        "on-primary-fixed": "#2f1411",
+                        "on-secondary-fixed": "#2a1710",
+                        "background": "#fff8f1",
+                        "primary-container": "#472825",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffddba",
+                        "surface-variant": "#ece1d0",
+                        "on-secondary-fixed-variant": "#5a4139",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#442b0a",
+                        "inverse-on-surface": "#faefde",
+                        "primary": "#2f1411",
+                        "surface-tint": "#7b5551",
+                        "secondary-fixed-dim": "#e2bfb4",
+                        "on-primary-container": "#ba8e89",
+                        "on-surface-variant": "#504442",
+                        "primary-fixed-dim": "#ecbbb6",
+                        "secondary-fixed": "#ffdbd0",
+                        "on-tertiary-container": "#b79168",
+                        "secondary-container": "#fdd8cd",
+                        "on-secondary-container": "#785c54",
+                        "inverse-primary": "#ecbbb6",
+                        "on-tertiary-fixed-variant": "#5e411f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "3xl": "32px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "80px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "base": "8px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-xl": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "body-md": ["Inter"],
+                        "caption": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-xl": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.25", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "500"}],
+                        "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .glass-effect {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .premium-shadow {
+            box-shadow: 0 10px 30px -10px rgba(71, 40, 37, 0.15), 
+                        0 4px 6px -2px rgba(71, 40, 37, 0.05);
+        }
+        .avatar-input {
+            position: relative;
+        }
+        .avatar-input input[type="file"] {
+            display: none;
+        }
+        .avatar-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2f1411 0%, #735850 100%);
+            color: white;
+            font-size: 60px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .avatar-preview:hover {
+            transform: scale(1.05);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden">
+    <!-- TopAppBar -->
+    <header class="fixed top-0 w-full z-50 bg-surface-glass backdrop-blur-xl border-b border-white/20 shadow-sm">
+        <nav class="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <span class="material-symbols-outlined text-primary">arrow_back</span>
+                    <img src="https://indiacybercafe.com/wp-content/uploads/2026/06/ICC-PrintHub-Icon-logo.png" alt="ICC PrintHub" class="w-6 h-6"/>
+                    <h1 id="pageTitle" class="font-headline-md text-headline-md font-bold text-primary">ICC PrintHub</h1>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Setup Mode (New User) -->
+    <div id="setupMode" class="hidden min-h-screen flex items-center justify-center px-margin-mobile py-12 pt-20">
+        <div class="w-full max-w-md space-y-8">
+            <div class="text-center space-y-2">
+                <h1 class="font-headline-lg text-headline-lg text-primary">Complete Your Profile</h1>
+                <p class="text-on-surface-variant">One more step to get started!</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl premium-shadow space-y-8">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-caption text-on-surface-variant">
+                        <span>Step 1 of 2</span>
+                        <span>50%</span>
+                    </div>
+                    <div class="w-full bg-surface-container-low rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 50%"></div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center space-y-4">
+                    <div class="avatar-input">
+                        <div class="avatar-preview" id="setupAvatarPreview">
+                            <span class="material-symbols-outlined" style="font-size: 80px;">person</span>
+                        </div>
+                        <input type="file" id="setupAvatarInput" accept="image/*"/>
+                    </div>
+                    <p class="text-center text-caption text-on-surface-variant">Click to upload a profile picture (optional)</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Full Name *</label>
+                        <input id="setupNameInput" type="text" placeholder="Enter your full name" class="w-full bg-surface-container-low border-2 border-outline-variant rounded-xl py-4 px-6 font-body-md focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all" required/>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Email (optional)</label>
+                        <input id="setupEmailInput" type="email" placeholder="your.email@example.com" class="w-full bg-surface-container-low border-2 border-outline-variant rounded-xl py-4 px-6 font-body-md focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all"/>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">City (optional)</label>
+                        <input id="setupCityInput" type="text" placeholder="Your city" class="w-full bg-surface-container-low border-2 border-outline-variant rounded-xl py-4 px-6 font-body-md focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all"/>
+                    </div>
+                </div>
+
+                <div id="setupErrorMessage" class="hidden p-4 bg-error-container border-l-4 border-error rounded-lg text-error">
+                    <p class="font-label-md text-label-md"></p>
+                </div>
+
+                <div id="setupLoadingState" class="hidden space-y-2">
+                    <div class="flex items-center justify-center gap-2">
+                        <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                        <p class="text-on-surface-variant font-label-md text-label-md">Saving profile...</p>
+                    </div>
+                </div>
+
+                <button id="setupSubmitBtn" type="button" class="w-full bg-primary text-on-primary py-4 rounded-full font-label-md text-label-md hover:opacity-90 transition-all shadow-lg shadow-primary/20">
+                    Continue to Dashboard
+                </button>
+
+                <p class="text-center text-caption text-on-surface-variant">
+                    You can update your profile anytime from settings
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- View/Edit Mode (Existing User) -->
+    <div id="viewMode" class="hidden pt-24 pb-12 px-margin-mobile md:px-margin-desktop max-w-3xl mx-auto">
+        <div class="bg-white rounded-3xl premium-shadow p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
+            <div class="avatar-input">
+                <div class="avatar-preview" id="viewAvatarPreview">
+                    <span class="material-symbols-outlined" style="font-size: 80px;">person</span>
+                </div>
+                <input type="file" id="viewAvatarInput" accept="image/*"/>
+            </div>
+            <div class="flex-1 text-center md:text-left space-y-4">
+                <div>
+                    <h2 id="profileName" class="font-headline-lg text-headline-lg text-primary">User Name</h2>
+                    <p id="profilePhone" class="text-on-surface-variant">+91 XXXXXXXXXX</p>
+                </div>
+                <div class="flex gap-4">
+                    <button id="editProfileBtn" class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md hover:opacity-90 transition-all">
+                        Edit Profile
+                    </button>
+                    <button id="cancelEditBtn" class="hidden border-2 border-secondary text-secondary px-6 py-2 rounded-full font-label-md text-label-md hover:bg-secondary/5 transition-all">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="editForm" class="hidden bg-white rounded-3xl premium-shadow p-8 space-y-6 mb-8">
+            <h3 class="font-headline-md text-headline-md text-primary">Edit Profile</h3>
+            
+            <div class="space-y-4">
+                <div class="space-y-2">
+                    <label class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Full Name</label>
+                    <input id="editNameInput" type="text" class="w-full bg-surface-container-low border-2 border-outline-variant rounded-xl py-4 px-6 font-body-md focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all"/>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Email</label>
+                    <input id="editEmailInput" type="email" class="w-full bg-surface-container-low border-2 border-outline-variant rounded-xl py-4 px-6 font-body-md focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all"/>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">City</label>
+                    <input id="editCityInput" type="text" class="w-full bg-surface-container-low border-2 border-outline-variant rounded-xl py-4 px-6 font-body-md focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all"/>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-caption font-caption text-on-surface-variant uppercase tracking-wider">Mobile Number</label>
+                    <input id="editPhoneInput" type="text" class="w-full bg-surface-container-low border-2 border-outline-variant rounded-xl py-4 px-6 font-body-md focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all" disabled/>
+                </div>
+            </div>
+
+            <div id="editErrorMessage" class="hidden p-4 bg-error-container border-l-4 border-error rounded-lg text-error">
+                <p class="font-label-md text-label-md"></p>
+            </div>
+
+            <div id="editLoadingState" class="hidden space-y-2">
+                <div class="flex items-center justify-center gap-2">
+                    <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                    <p class="text-on-surface-variant font-label-md text-label-md">Saving changes...</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button id="saveProfileBtn" class="flex-1 bg-primary text-on-primary py-4 rounded-full font-label-md text-label-md hover:opacity-90 transition-all">
+                    Save Changes
+                </button>
+                <button id="discardChangesBtn" class="flex-1 border-2 border-secondary text-secondary py-4 rounded-full font-label-md text-label-md hover:bg-secondary/5 transition-all">
+                    Discard
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl premium-shadow p-8 space-y-6">
+            <h3 class="font-headline-md text-headline-md text-primary">Order History</h3>
+            
+            <div id="ordersList" class="space-y-4">
+                <p class="text-on-surface-variant text-center py-8">No orders yet. Start by uploading your first print!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzYEuCjArt628xRVqYY5vWoQNo2p71vfQ",
+            authDomain: "icc-printhub.firebaseapp.com",
+            databaseURL: "https://icc-printhub-default-rtdb.firebaseio.com",
+            projectId: "icc-printhub",
+            storageBucket: "icc-printhub.firebasestorage.app",
+            messagingSenderId: "656827827016",
+            appId: "1:656827827016:web:ba0494906bf9bf7d9d697d"
+        };
+
+        let database;
+        let auth;
+        let userUID = localStorage.getItem('userUID');
+        let isNewUser = localStorage.getItem('isNewUser') === 'true';
+        let setupAvatarUrl = null;
+        let viewAvatarUrl = null;
+
+        console.log('[Profile Init] User UID:', userUID);
+        console.log('[Profile Init] Is New User:', isNewUser);
+
+        if (!userUID) {
+            console.error('[Profile Init] No user UID found - redirecting to login');
+            window.location.href = 'login.html';
+        }
+
+        async function initFirebase() {
+            try {
+                console.log('[Profile Init] Initializing Firebase...');
+                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js");
+                const { getDatabase } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js");
+                const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js");
+                
+                const app = initializeApp(firebaseConfig);
+                database = getDatabase(app);
+                auth = getAuth(app);
+                console.log('[Profile Init] ✅ Firebase initialized');
+            } catch (error) {
+                console.error('[Profile Init] ❌ Firebase init error:', error);
+            }
+        }
+
+        async function getUserProfile(uid) {
+            try {
+                console.log('[Profile Get] Fetching profile for UID:', uid);
+                const { ref, get } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js");
+                const userRef = ref(database, `users/${uid}`);
+                const snapshot = await get(userRef);
+                if (snapshot.exists()) {
+                    console.log('[Profile Get] ✅ Profile found');
+                    return snapshot.val();
+                }
+                console.log('[Profile Get] No profile found');
+                return null;
+            } catch (error) {
+                console.error('[Profile Get] ❌ Error:', error);
+                return null;
+            }
+        }
+
+        async function saveUserProfile(uid, profileData) {
+            try {
+                console.log('[Profile Save] Saving profile for UID:', uid);
+                const { ref, set } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js");
+                const userRef = ref(database, `users/${uid}`);
+                
+                let mobile = localStorage.getItem('mobile') || '';
+                if (!mobile && auth.currentUser) {
+                    mobile = auth.currentUser.phoneNumber || '';
+                }
+                
+                const completeData = {
+                    uid: uid,
+                    mobile: mobile,
+                    name: profileData.name,
+                    email: profileData.email || null,
+                    city: profileData.city || null,
+                    avatar: profileData.avatar || null,
+                    profileCompleted: true,
+                    createdAt: new Date().toISOString()
+                };
+                
+                await set(userRef, completeData);
+                console.log('[Profile Save] ✅ Profile saved');
+                return completeData;
+            } catch (error) {
+                console.error('[Profile Save] ❌ Error:', error);
+                throw error;
+            }
+        }
+
+        async function updateUserProfile(uid, profileData) {
+            try {
+                console.log('[Profile Update] Updating profile for UID:', uid);
+                const { ref, get, set } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js");
+                const userRef = ref(database, `users/${uid}`);
+                const snapshot = await get(userRef);
+                
+                if (snapshot.exists()) {
+                    const updatedData = {
+                        ...snapshot.val(),
+                        name: profileData.name,
+                        email: profileData.email || null,
+                        city: profileData.city || null,
+                        avatar: profileData.avatar || null,
+                        updatedAt: new Date().toISOString()
+                    };
+                    await set(userRef, updatedData);
+                    console.log('[Profile Update] ✅ Profile updated');
+                    return updatedData;
+                }
+            } catch (error) {
+                console.error('[Profile Update] ❌ Error:', error);
+                throw error;
+            }
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        window.addEventListener('load', async () => {
+            await initFirebase();
+            if (isNewUser) {
+                document.getElementById('setupMode').classList.remove('hidden');
+                setupInitialize();
+            } else {
+                document.getElementById('viewMode').classList.remove('hidden');
+                await viewInitialize();
+            }
+        });
+
+        function setupInitialize() {
+            const setupAvatarPreview = document.getElementById('setupAvatarPreview');
+            const setupAvatarInput = document.getElementById('setupAvatarInput');
+            const setupNameInput = document.getElementById('setupNameInput');
+            const setupEmailInput = document.getElementById('setupEmailInput');
+            const setupCityInput = document.getElementById('setupCityInput');
+            const setupSubmitBtn = document.getElementById('setupSubmitBtn');
+            const setupErrorMessage = document.getElementById('setupErrorMessage');
+            const setupLoadingState = document.getElementById('setupLoadingState');
+
+            setupAvatarPreview.addEventListener('click', () => setupAvatarInput.click());
+            setupAvatarInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        setupAvatarUrl = event.target.result;
+                        setupAvatarPreview.innerHTML = `<img src="${setupAvatarUrl}" class="w-full h-full object-cover rounded-full"/>`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            setupSubmitBtn.addEventListener('click', async () => {
+                const name = setupNameInput.value.trim();
+                if (!name || name.length < 2) {
+                    document.getElementById('setupErrorMessage').classList.remove('hidden');
+                    document.getElementById('setupErrorMessage').querySelector('p').textContent = 'Name must be at least 2 characters';
+                    return;
+                }
+
+                const email = setupEmailInput.value.trim();
+                if (email && !isValidEmail(email)) {
+                    document.getElementById('setupErrorMessage').classList.remove('hidden');
+                    document.getElementById('setupErrorMessage').querySelector('p').textContent = 'Invalid email';
+                    return;
+                }
+
+                setupLoadingState.classList.remove('hidden');
+                setupSubmitBtn.disabled = true;
+                try {
+                    await saveUserProfile(userUID, {
+                        name, 
+                        email: email || null, 
+                        city: setupCityInput.value.trim() || null,
+                        avatar: setupAvatarUrl
+                    });
+                    localStorage.setItem('userName', name);
+                    localStorage.setItem('isNewUser', 'false');
+                    setTimeout(() => window.location.href = 'index.html', 500);
+                } catch (error) {
+                    document.getElementById('setupErrorMessage').classList.remove('hidden');
+                    document.getElementById('setupErrorMessage').querySelector('p').textContent = 'Failed to save';
+                } finally {
+                    setupLoadingState.classList.add('hidden');
+                    setupSubmitBtn.disabled = false;
+                }
+            });
+        }
+
+        async function viewInitialize() {
+            const profile = await getUserProfile(userUID);
+            const profileName = document.getElementById('profileName');
+            const profilePhone = document.getElementById('profilePhone');
+            const editProfileBtn = document.getElementById('editProfileBtn');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const editForm = document.getElementById('editForm');
+            const editNameInput = document.getElementById('editNameInput');
+            const editEmailInput = document.getElementById('editEmailInput');
+            const editCityInput = document.getElementById('editCityInput');
+            const editPhoneInput = document.getElementById('editPhoneInput');
+            const viewAvatarPreview = document.getElementById('viewAvatarPreview');
+            const viewAvatarInput = document.getElementById('viewAvatarInput');
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            const discardChangesBtn = document.getElementById('discardChangesBtn');
+
+            if (profile) {
+                let mobile = profile.mobile || localStorage.getItem('mobile') || '';
+                if (!mobile && auth.currentUser) {
+                    mobile = auth.currentUser.phoneNumber || '';
+                }
+                
+                profileName.textContent = profile.name || 'User';
+                profilePhone.textContent = mobile || '+91 XXXXXXXXXX';
+                editNameInput.value = profile.name || '';
+                editEmailInput.value = profile.email || '';
+                editCityInput.value = profile.city || '';
+                editPhoneInput.value = mobile || '';
+                
+                if (profile.avatar) {
+                    viewAvatarUrl = profile.avatar;
+                    viewAvatarPreview.innerHTML = `<img src="${profile.avatar}" class="w-full h-full object-cover rounded-full"/>`;
+                }
+            }
+
+            editProfileBtn.addEventListener('click', () => {
+                editForm.classList.remove('hidden');
+                editProfileBtn.classList.add('hidden');
+                cancelEditBtn.classList.remove('hidden');
+            });
+
+            [cancelEditBtn, discardChangesBtn].forEach(btn => btn.addEventListener('click', () => {
+                editForm.classList.add('hidden');
+                editProfileBtn.classList.remove('hidden');
+                cancelEditBtn.classList.add('hidden');
+            }));
+
+            viewAvatarPreview.addEventListener('click', () => viewAvatarInput.click());
+            viewAvatarInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        viewAvatarUrl = event.target.result;
+                        viewAvatarPreview.innerHTML = `<img src="${viewAvatarUrl}" class="w-full h-full object-cover rounded-full"/>`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            saveProfileBtn.addEventListener('click', async () => {
+                const name = editNameInput.value.trim();
+                const email = editEmailInput.value.trim();
+                if (!name || (email && !isValidEmail(email))) return;
+
+                document.getElementById('editLoadingState').classList.remove('hidden');
+                saveProfileBtn.disabled = true;
+                try {
+                    const updatedProfile = await updateUserProfile(userUID, { 
+                        name, 
+                        email: email || null, 
+                        city: editCityInput.value.trim() || null, 
+                        avatar: viewAvatarUrl 
+                    });
+                    localStorage.setItem('userName', name);
+                    
+                    editForm.classList.add('hidden');
+                    editProfileBtn.classList.remove('hidden');
+                    cancelEditBtn.classList.add('hidden');
+                    profileName.textContent = name;
+                    
+                    const mobile = updatedProfile.mobile || editPhoneInput.value || '';
+                    profilePhone.textContent = mobile || '+91 XXXXXXXXXX';
+                } catch (error) {
+                    console.error('[Save Profile Error]', error);
+                } finally {
+                    document.getElementById('editLoadingState').classList.add('hidden');
+                    saveProfileBtn.disabled = false;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
