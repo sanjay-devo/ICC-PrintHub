@@ -169,8 +169,13 @@
 <span class="material-symbols-outlined text-primary scale-95 active:scale-90 transition-transform cursor-pointer">shopping_cart</span>
 <span class="absolute -top-1 -right-1 bg-primary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">2</span>
 </div>
+<!-- Guest State - Login Button -->
+<a id="guestLoginBtn" href="login.html" class="hidden md:flex items-center gap-2 px-6 py-2 bg-primary text-on-primary rounded-full font-label-md text-label-md hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-sm">login</span>
+<span>Login</span>
+</a>
 <!-- User Profile Dropdown -->
-<div class="relative group hidden md:block">
+<div id="userMenuContainer" class="relative group hidden md:block">
 <button id="userMenuBtn" class="flex items-center gap-2 p-2 hover:bg-white/10 rounded-full transition-all">
 <div id="userInitials" class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold">
 <span class="material-symbols-outlined scale-75">person</span>
@@ -215,11 +220,11 @@
                     </p>
 </div>
 <div class="flex flex-col sm:flex-row gap-4 pt-4">
-<button class="bg-primary text-on-primary px-10 py-5 rounded-full font-label-md text-label-md shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
+<button onclick="if(requireLogin()) location.href='upload.html'" class="bg-primary text-on-primary px-10 py-5 rounded-full font-label-md text-label-md shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cloud_upload</span>
                         Upload Files
                     </button>
-<button class="border-2 border-secondary text-secondary px-10 py-5 rounded-full font-label-md text-label-md hover:bg-secondary/5 transition-all flex items-center justify-center gap-3">
+<button onclick="if(requireLogin()) location.href='track-order.html'" class="border-2 border-secondary text-secondary px-10 py-5 rounded-full font-label-md text-label-md hover:bg-secondary/5 transition-all flex items-center justify-center gap-3">
 <span class="material-symbols-outlined">local_shipping</span>
                         Track Order
                     </button>
@@ -273,49 +278,49 @@
 </div>
 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
 <!-- Upload Cards -->
-<button class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
+<button onclick="if(requireLogin()) location.href='upload.html?type=pdf'" class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
 <span class="material-symbols-outlined text-4xl">picture_as_pdf</span>
 </div>
 <span class="font-label-md text-label-md text-primary">PDF Files</span>
 </button>
-<button class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
+<button onclick="if(requireLogin()) location.href='upload.html?type=photo'" class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
 <span class="material-symbols-outlined text-4xl">image</span>
 </div>
 <span class="font-label-md text-label-md text-primary">Photos</span>
 </button>
-<button class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
+<button onclick="if(requireLogin()) location.href='upload.html?type=document'" class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
 <span class="material-symbols-outlined text-4xl">description</span>
 </div>
 <span class="font-label-md text-label-md text-primary">Documents</span>
 </button>
-<button class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
+<button onclick="if(requireLogin()) location.href='upload.html?type=scan'" class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
 <span class="material-symbols-outlined text-4xl">photo_camera</span>
 </div>
 <span class="font-label-md text-label-md text-primary">Scan &amp; Print</span>
 </button>
-<button class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
+<button onclick="if(requireLogin()) location.href='upload.html?type=excel'" class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
 <span class="material-symbols-outlined text-4xl">table_chart</span>
 </div>
 <span class="font-label-md text-label-md text-primary">Excel</span>
 </button>
-<button class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
+<button onclick="if(requireLogin()) location.href='upload.html?type=presentation'" class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
 <span class="material-symbols-outlined text-4xl">slideshow</span>
 </div>
 <span class="font-label-md text-label-md text-primary">Presentation</span>
 </button>
-<button class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
+<button onclick="if(requireLogin()) location.href='upload.html?type=idcard'" class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
 <span class="material-symbols-outlined text-4xl">badge</span>
 </div>
 <span class="font-label-md text-label-md text-primary">ID Cards</span>
 </button>
-<button class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
+<button onclick="if(requireLogin()) location.href='upload.html?type=notes'" class="premium-card-hover ripple-container bg-surface-container-low p-8 rounded-3xl flex flex-col items-center gap-4 text-center group">
 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
 <span class="material-symbols-outlined text-4xl">sticky_note_2</span>
 </div>
@@ -453,7 +458,7 @@
 </div>
 <h5 class="font-headline-md text-headline-md text-primary mb-2">Assignment Prints</h5>
 <p class="text-on-surface-variant mb-6">Bulk printing for students with premium binding options.</p>
-<button class="text-primary font-bold flex items-center gap-2 hover:translate-x-2 transition-transform">Order Now <span class="material-symbols-outlined">chevron_right</span></button>
+<button onclick="if(requireLogin()) location.href='upload.html?service=assignment'" class="text-primary font-bold flex items-center gap-2 hover:translate-x-2 transition-transform">Order Now <span class="material-symbols-outlined">chevron_right</span></button>
 </div>
 <!-- Service Card 2 -->
 <div class="min-w-[300px] bg-white rounded-3xl p-4 premium-shadow premium-card-hover shrink-0">
@@ -462,7 +467,7 @@
 </div>
 <h5 class="font-headline-md text-headline-md text-primary mb-2">Project Reports</h5>
 <p class="text-on-surface-variant mb-6">Hardbound or softbound reports for corporate &amp; academic needs.</p>
-<button class="text-primary font-bold flex items-center gap-2 hover:translate-x-2 transition-transform">Order Now <span class="material-symbols-outlined">chevron_right</span></button>
+<button onclick="if(requireLogin()) location.href='upload.html?service=reports'" class="text-primary font-bold flex items-center gap-2 hover:translate-x-2 transition-transform">Order Now <span class="material-symbols-outlined">chevron_right</span></button>
 </div>
 <!-- Service Card 3 -->
 <div class="min-w-[300px] bg-white rounded-3xl p-4 premium-shadow premium-card-hover shrink-0">
@@ -471,7 +476,7 @@
 </div>
 <h5 class="font-headline-md text-headline-md text-primary mb-2">Photo Printing</h5>
 <p class="text-on-surface-variant mb-6">Ultra-HD photo prints on glossy or matte archival paper.</p>
-<button class="text-primary font-bold flex items-center gap-2 hover:translate-x-2 transition-transform">Order Now <span class="material-symbols-outlined">chevron_right</span></button>
+<button onclick="if(requireLogin()) location.href='upload.html?service=photos'" class="text-primary font-bold flex items-center gap-2 hover:translate-x-2 transition-transform">Order Now <span class="material-symbols-outlined">chevron_right</span></button>
 </div>
 </div>
 </section>
@@ -612,6 +617,86 @@
 
     <!-- Authentication Script -->
     <script>
+        // ============================================================================
+        // GLOBAL AUTHENTICATION HELPERS
+        // ============================================================================
+        
+        /**
+         * Check if user is logged in
+         * @returns {boolean} True if user has valid userUID in localStorage
+         */
+        function isLoggedIn() {
+            return !!localStorage.getItem("userUID");
+        }
+
+        /**
+         * Require login before proceeding
+         * Redirects to login if not authenticated
+         * @returns {boolean} True if user is logged in, false otherwise
+         */
+        function requireLogin() {
+            if (!isLoggedIn()) {
+                const currentPage = window.location.pathname;
+                const redirect = encodeURIComponent(currentPage);
+                window.location.href = `login.html?redirect=${redirect}`;
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * Update header UI based on authentication state
+         */
+        function updateHeaderUI() {
+            const isUserLoggedIn = isLoggedIn();
+            const guestLoginBtn = document.getElementById('guestLoginBtn');
+            const userMenuContainer = document.getElementById('userMenuContainer');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const userInitials = document.getElementById('userInitials');
+            
+            console.log('[Header UI] User logged in:', isUserLoggedIn);
+            console.log('[Header UI] Guest button found:', !!guestLoginBtn);
+            console.log('[Header UI] User menu found:', !!userMenuContainer);
+            
+            if (isUserLoggedIn) {
+                console.log('[Header UI] Showing user menu, hiding login button');
+                // Show user menu, hide login button
+                if (guestLoginBtn) {
+                    guestLoginBtn.style.display = 'none';
+                    guestLoginBtn.classList.add('hidden');
+                }
+                if (userMenuContainer) {
+                    userMenuContainer.style.display = 'flex';
+                    userMenuContainer.classList.remove('hidden');
+                }
+                
+                // Update user info
+                const userName = localStorage.getItem('userName') || 'User';
+                if (userNameDisplay) userNameDisplay.textContent = userName;
+                
+                if (userInitials && userName !== 'User') {
+                    const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                    userInitials.textContent = initials;
+                    console.log('[Header UI] Set user initials:', initials);
+                }
+            } else {
+                console.log('[Header UI] Showing login button, hiding user menu');
+                // Show login button, hide user menu
+                if (guestLoginBtn) {
+                    guestLoginBtn.style.display = 'flex';
+                    guestLoginBtn.classList.remove('hidden');
+                }
+                if (userMenuContainer) {
+                    userMenuContainer.style.display = 'none';
+                    userMenuContainer.classList.add('hidden');
+                }
+            }
+        }
+
+        // ============================================================================
+        // FIREBASE CONFIGURATION & INITIALIZATION
+        // ============================================================================
+
         const firebaseConfig = {
             apiKey: "AIzaSyAzYEuCjArt628xRVqYY5vWoQNo2p71vfQ",
             authDomain: "icc-printhub.firebaseapp.com",
@@ -626,7 +711,7 @@
 
         async function initializeFirebase() {
             try {
-                console.log('[Dashboard Auth] Initializing Firebase...');
+                console.log('[Home Auth] Initializing Firebase...');
                 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js");
                 const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js");
                 const { getDatabase } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js");
@@ -635,100 +720,73 @@
                 auth = getAuth(app);
                 database = getDatabase(app);
 
-                console.log('[Dashboard Auth] ✅ Firebase initialized');
-                monitorAuthState();
+                console.log('[Home Auth] ✅ Firebase initialized');
             } catch (error) {
-                console.error('[Dashboard Auth] ❌ Firebase initialization error:', error);
+                console.error('[Home Auth] ❌ Firebase initialization error:', error);
             }
         }
 
-        function monitorAuthState() {
-            console.log('[Dashboard Auth] Checking authentication state...');
-            
-            const userUID = localStorage.getItem('userUID');
-            const userName = localStorage.getItem('userName') || 'User';
-            const loginTime = localStorage.getItem('loginTime');
-            
-            console.log('[Dashboard Auth] User UID:', userUID);
-            console.log('[Dashboard Auth] User Name:', userName);
-            console.log('[Dashboard Auth] Login Time:', loginTime);
+        
+        // ============================================================================
+        // PAGE INITIALIZATION
+        // ============================================================================
 
-            // Update UI
-            const userNameDisplay = document.getElementById('userNameDisplay');
-            const userInitialsEl = document.getElementById('userInitials');
+        function initializeHeaderUI() {
+            console.log('[Page Init] Initializing header UI...');
+            updateHeaderUI();
             
-            if (userNameDisplay) {
-                userNameDisplay.textContent = userName;
-            }
-            
-            if (userInitialsEl && userName !== 'User') {
-                const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-                userInitialsEl.textContent = initials;
-                console.log('[Dashboard Auth] Updated user initials:', initials);
-            }
-
-            // Verify user is authenticated
-            if (!userUID) {
-                console.warn('[Dashboard Auth] ⚠️ No user UID - redirecting to login');
-                window.location.href = 'login.html';
-                return;
-            }
-
-            console.log('[Dashboard Auth] ✅ User authenticated');
-        }
-
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', async () => {
-                try {
-                    console.log('[Dashboard Logout] Logging out...');
-                    
-                    if (auth) {
-                        const { signOut } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js");
-                        await signOut(auth);
-                        console.log('[Dashboard Logout] Firebase signOut complete');
+            // Setup logout handler
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async () => {
+                    try {
+                        console.log('[Logout] Logging out...');
+                        
+                        if (auth) {
+                            const { signOut } = await import("https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js");
+                            await signOut(auth);
+                            console.log('[Logout] Firebase signOut complete');
+                        }
+                        
+                        localStorage.clear();
+                        console.log('[Logout] LocalStorage cleared');
+                        window.location.href = 'index.html';
+                    } catch (error) {
+                        console.error('[Logout] Error:', error);
+                        // Force logout anyway
+                        localStorage.clear();
+                        window.location.href = 'index.html';
                     }
-                    
-                    localStorage.clear();
-                    console.log('[Dashboard Logout] LocalStorage cleared');
-                    window.location.href = 'login.html';
-                } catch (error) {
-                    console.error('[Dashboard Logout] ❌ Error:', error);
-                    // Force logout anyway
-                    localStorage.clear();
-                    window.location.href = 'login.html';
-                }
-            });
+                });
+                console.log('[Page Init] Logout button handler attached');
+            }
         }
 
+        // Initialize when DOM is ready (not waiting for all images)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeHeaderUI);
+        } else {
+            initializeHeaderUI();
+        }
+
+        // Also initialize on load
         window.addEventListener('load', () => {
-            console.log('[Dashboard Load] Page loaded, initializing...');
+            console.log('[Load Event] Page fully loaded');
+            updateHeaderUI();
             
-            const userUID = localStorage.getItem('userUID');
-            const userName = localStorage.getItem('userName') || 'User';
-            const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-            
-            // Update UI
-            const userNameDisplay = document.getElementById('userNameDisplay');
-            const userInitialsEl = document.getElementById('userInitials');
-            
-            if (userNameDisplay) {
-                userNameDisplay.textContent = userName;
+            // Only initialize Firebase if user is logged in
+            if (isLoggedIn()) {
+                console.log('[Load Event] User is authenticated, initializing Firebase');
+                initializeFirebase();
+            } else {
+                console.log('[Load Event] User is not authenticated - public home page');
             }
-            
-            if (userInitialsEl && userName !== 'User') {
-                userInitialsEl.textContent = userInitials;
-            }
+        });
 
-            // Check authentication
-            if (!userUID) {
-                console.warn('[Dashboard Load] ⚠️ No user UID - redirecting to login');
-                window.location.href = 'login.html';
-                return;
-            }
-
-            console.log('[Dashboard Load] ✅ User authenticated, initializing Firebase');
-            initializeFirebase();
+        // Update UI if storage changes (logout from another tab)
+        window.addEventListener('storage', () => {
+            console.log('[Storage Event] Storage changed in another tab');
+            updateHeaderUI();
         });
     </script>
 </body></html>

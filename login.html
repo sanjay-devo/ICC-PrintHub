@@ -556,8 +556,13 @@
                     localStorage.setItem('userName', userProfile.name || 'User');
                     localStorage.setItem('userEmail', userProfile.email || '');
 
-                    console.log('[Post Login] Redirecting to dashboard...');
-                    window.location.href = 'index.html';
+                    // Check for redirect parameter
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectTo = urlParams.get('redirect');
+                    const finalRedirect = redirectTo || 'index.html';
+
+                    console.log('[Post Login] Redirecting to:', finalRedirect);
+                    window.location.href = finalRedirect;
 
                 } else {
                     console.log('[Post Login] No profile found - new user');
@@ -576,7 +581,10 @@
 
                 // Fallback - redirect to profile setup
                 setTimeout(() => {
-                    window.location.href = 'profile.html';
+                    // Check for redirect parameter in fallback
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectTo = urlParams.get('redirect') || 'profile.html';
+                    window.location.href = redirectTo;
                 }, 2000);
             }
         }

@@ -301,6 +301,36 @@
     </div>
 
     <script>
+        // ============================================================================
+        // GLOBAL AUTHENTICATION HELPERS
+        // ============================================================================
+        
+        /**
+         * Check if user is logged in
+         * @returns {boolean} True if user has valid userUID in localStorage
+         */
+        function isLoggedIn() {
+            return !!localStorage.getItem("userUID");
+        }
+
+        /**
+         * Require login before proceeding
+         * Redirects to login with redirect parameter if not authenticated
+         * @returns {boolean} True if user is logged in, false otherwise
+         */
+        function requireLogin() {
+            if (!isLoggedIn()) {
+                const currentPage = encodeURIComponent('profile.html');
+                window.location.href = `login.html?redirect=${currentPage}`;
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================================
+        // PROFILE PAGE FIREBASE CONFIGURATION
+        // ============================================================================
+
         const firebaseConfig = {
             apiKey: "AIzaSyAzYEuCjArt628xRVqYY5vWoQNo2p71vfQ",
             authDomain: "icc-printhub.firebaseapp.com",
@@ -321,9 +351,9 @@
         console.log('[Profile Init] User UID:', userUID);
         console.log('[Profile Init] Is New User:', isNewUser);
 
-        if (!userUID) {
-            console.error('[Profile Init] No user UID found - redirecting to login');
-            window.location.href = 'login.html';
+        // Check authentication before page loads
+        if (!requireLogin()) {
+            // requireLogin will handle the redirect
         }
 
         async function initFirebase() {
