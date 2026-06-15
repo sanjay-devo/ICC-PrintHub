@@ -99,7 +99,7 @@
                     <div class="mb-8">
                         <label class="block text-sm font-bold text-primary mb-4">Print Type</label>
                         <div class="option-group">
-                            <button class="option-btn active" onclick="setSetting('printType', 'B/W')">Black & White</button>
+                            <button class="option-btn active" onclick="setSetting('printType', 'Black & White')">Black & White</button>
                             <button class="option-btn" onclick="setSetting('printType', 'Color')">Color</button>
                         </div>
                     </div>
@@ -108,8 +108,8 @@
                     <div class="mb-8">
                         <label class="block text-sm font-bold text-primary mb-4">Print Side</label>
                         <div class="option-group">
-                            <button class="option-btn active" onclick="setSetting('printSide', 'Single')">Single Side</button>
-                            <button class="option-btn" onclick="setSetting('printSide', 'Double')">Double Side</button>
+                            <button class="option-btn active" onclick="setSetting('printSide', 'Single Side')">Single Side</button>
+                            <button class="option-btn" onclick="setSetting('printSide', 'Double Side')">Double Side</button>
                         </div>
                     </div>
 
@@ -152,9 +152,9 @@
                         <label class="block text-sm font-bold text-primary mb-4">Binding</label>
                         <div class="option-group">
                             <button class="option-btn active" onclick="setSetting('binding', 'None')">None</button>
-                            <button class="option-btn" onclick="setSetting('binding', 'Spiral')">Spiral</button>
-                            <button class="option-btn" onclick="setSetting('binding', 'Staple')">Staple</button>
-                            <button class="option-btn" onclick="setSetting('binding', 'Hard')">Hard Binding</button>
+                            <button class="option-btn" onclick="setSetting('binding', 'Spiral', 'Spiral')">Spiral</button>
+                            <button class="option-btn" onclick="setSetting('binding', 'Staple', 'Staple')">Staple</button>
+                            <button class="option-btn" onclick="setSetting('binding', 'Hard Binding', 'Hard')">Hard Binding</button>
                         </div>
                     </div>
 
@@ -257,12 +257,13 @@
         // Settings state
         const settings = {
             paperSize: 'A4',
-            printType: 'B/W',
-            printSide: 'Single',
+            printType: 'Black & White',
+            printSide: 'Single Side',
             paperQuality: '70 GSM',
             orientation: 'Portrait',
             copies: 1,
             binding: 'None',
+            bindingPriceKey: 'None',
             extras: {
                 transparentCover: false,
                 backSheet: false,
@@ -280,15 +281,22 @@
             'Spiral': 35,
             'Staple': 5,
             'Hard': 50,
+            'None': 0,
             'transparentCover': 10,
             'backSheet': 5,
             'lamination': 15
         };
 
-        function setSetting(key, value) {
-            settings[key] = value;
+        function setSetting(key, displayValue, priceKey) {
+            settings[key] = displayValue;
+            
+            // Handle binding special case where display name differs from price key
+            if (key === 'binding') {
+                settings.bindingPriceKey = priceKey || displayValue;
+            }
+            
             updateDisplay();
-            updateAllButtonStates();
+            updateAllButtonStates(key);
             calculatePrice();
         }
 
@@ -296,6 +304,7 @@
             const num = parseInt(value) || 1;
             settings.copies = Math.max(1, Math.min(100, num));
             document.getElementById('copiesInput').value = settings.copies;
+            document.getElementById('copiesDisplay').textContent = settings.copies;
             calculatePrice();
         }
 
@@ -310,38 +319,65 @@
         function toggleExtra(key, value) {
             settings.extras[key] = value;
             calculatePrice();
+            updateExtraCheckboxes();
+        }
+
+        function updateExtraCheckboxes() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                const extraName = checkbox.getAttribute('onchange').match(/'([^']+)'/)[1];
+                checkbox.checked = settings.extras[extraName] || false;
+            });
         }
 
         function updateDisplay() {
             document.getElementById('displayPaperSize').textContent = settings.paperSize;
-            document.getElementById('displayPrintType').textContent = settings.printType;
+            // Display simplified text (B/W instead of Black & White)
+            const displayType = settings.printType === 'Black & White' ? 'B/W' : settings.printType;
+            document.getElementById('displayPrintType').textContent = displayType;
             document.getElementById('displayPaperQuality').textContent = settings.paperQuality;
             document.getElementById('displayBinding').textContent = settings.binding;
             document.getElementById('copiesDisplay').textContent = settings.copies;
         }
 
-        function updateAllButtonStates() {
-            // Update button active states
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // This is simplified - in production you'd track which buttons go with which setting
-            const activeButtons = document.querySelectorAll(`.option-btn:contains("${settings.paperSize}"), .option-btn:contains("${settings.printType}")`);
+        function updateAllButtonStates(changedKey) {
+            // Map of setting keys to their possible button values
+            const settingGroups = {
+                'paperSize': ['A4', 'A3', 'Legal', 'Letter'],
+                'printType': ['Black & White', 'Color'],
+                'printSide': ['Single Side', 'Double Side'],
+                'paperQuality': ['70 GSM', '75 GSM', '80 GSM', '100 GSM'],
+                'orientation': ['Portrait', 'Landscape'],
+                'binding': ['None', 'Spiral', 'Staple', 'Hard Binding']
+            };
+
+            // Only update buttons for the changed setting
+            if (changedKey && settingGroups[changedKey]) {
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    const btnText = btn.textContent.trim();
+                    // Check if this button belongs to the changed setting group
+                    if (settingGroups[changedKey].includes(btnText)) {
+                        if (btnText === settings[changedKey]) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    }
+                });
+            }
         }
 
         function calculatePrice() {
-            // Determine page price based on paper size and print type
+            // Determine page price based on print type only (not size, size doesn't change price per page)
             let pagePrice = 0;
             
-            if (settings.printType === 'B/W') {
-                pagePrice = settings.paperSize === 'A3' ? 3.00 : 0.50; // A4/Legal/Letter = 0.50, A3 = 3.00
+            if (settings.printType === 'Black & White') {
+                pagePrice = 0.50;
             } else if (settings.printType === 'Color') {
-                pagePrice = settings.paperSize === 'A3' ? 10.00 : 5.00; // A4/Legal/Letter = 5.00, A3 = 10.00
+                pagePrice = 3.00;
             }
             
             let printingCost = totalPages * pagePrice * settings.copies;
-            let bindingCost = prices[settings.binding] || 0;
+            let bindingCost = prices[settings.bindingPriceKey] || 0;
             let extrasCost = 0;
 
             if (settings.extras.transparentCover) extrasCost += prices.transparentCover;
@@ -395,6 +431,15 @@
                 Object.assign(settings, loaded);
                 updateDisplay();
             }
+            
+            // Initialize button states
+            updateAllButtonStates('paperSize');
+            updateAllButtonStates('printType');
+            updateAllButtonStates('printSide');
+            updateAllButtonStates('paperQuality');
+            updateAllButtonStates('orientation');
+            updateAllButtonStates('binding');
+            updateExtraCheckboxes();
             
             calculatePrice();
         });
