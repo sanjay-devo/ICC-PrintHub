@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Order History - ICC PrintHub</title>
+    <link rel="icon" href="https://indiacybercafe.com/wp-content/uploads/2026/06/ICC-PrintHub-Icon-logo.png" type="image/png"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "text-primary": "#472825",
+                        "text-secondary": "#96786F",
+                        "primary": "#472825",
+                        "secondary": "#96786F",
+                        "accent": "#D3AB80",
+                        "light-cream": "#FDE4BC",
+                        "background": "#FFF4E2",
+                    },
+                },
+            }
+        };
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFF4E2 0%, #FDE4BC 100%);
+            min-height: 100vh;
+        }
+        
+        .order-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid #D3AB80;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .order-card:hover {
+            box-shadow: 0 8px 24px rgba(71, 40, 37, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #FDE4BC;
+            color: #472825;
+        }
+        
+        .status-accepted {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        
+        .status-printing {
+            background: #FCE4EC;
+            color: #C2185B;
+        }
+        
+        .status-packed {
+            background: #F3E5F5;
+            color: #7B1FA2;
+        }
+        
+        .status-shipped {
+            background: #E0F2F1;
+            color: #00796B;
+        }
+        
+        .status-delivered {
+            background: #C8E6C9;
+            color: #2E7D32;
+        }
+        
+        .progress-steps {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: #E0E0E0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-step.completed {
+            background: #4CAF50;
+        }
+        
+        .progress-step.active {
+            background: #D3AB80;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="profile.html" class="p-2 hover:bg-light-cream rounded-lg transition">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </a>
+                <div>
+                    <h1 class="font-bold text-primary">Order History</h1>
+                    <p class="text-xs text-secondary">Track your orders</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        
+        <!-- Filter Tabs -->
+        <div class="flex gap-4 mb-6 overflow-x-auto">
+            <button onclick="filterOrders('all')" class="filter-tab active px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition">
+                All Orders
+            </button>
+            <button onclick="filterOrders('pending')" class="filter-tab px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition">
+                Pending
+            </button>
+            <button onclick="filterOrders('processing')" class="filter-tab px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition">
+                Processing
+            </button>
+            <button onclick="filterOrders('shipped')" class="filter-tab px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition">
+                Shipped
+            </button>
+            <button onclick="filterOrders('delivered')" class="filter-tab px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition">
+                Delivered
+            </button>
+        </div>
+
+        <!-- Orders List -->
+        <div id="ordersList">
+            <div class="text-center py-12">
+                <span class="material-symbols-outlined text-6xl text-secondary/20 block mb-4">shopping_cart</span>
+                <p class="text-secondary">No orders found</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Order Detail Modal -->
+    <div id="orderModal" style="display: none;" onclick="closeOrderModal()" class="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="sticky top-0 bg-white border-b border-outline-variant/30 p-6 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-primary" id="modalOrderId">Order #</h2>
+                <button onclick="closeOrderModal()" class="p-2 hover:bg-light-cream rounded-lg">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6">
+                
+                <!-- Status Section -->
+                <div>
+                    <h3 class="font-bold text-primary mb-3">Order Status</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <span id="modalOrderStatus" class="status-badge status-pending">Pending</span>
+                        <span id="modalOrderDate" class="text-sm text-secondary">--</span>
+                    </div>
+                    <div id="modalProgressSteps" class="progress-steps"></div>
+                </div>
+
+                <!-- Files Section -->
+                <div>
+                    <h3 class="font-bold text-primary mb-3">Files</h3>
+                    <div id="modalFilesList" class="space-y-2"></div>
+                </div>
+
+                <!-- Print Settings -->
+                <div>
+                    <h3 class="font-bold text-primary mb-3">Print Settings</h3>
+                    <div id="modalSettingsList" class="grid grid-cols-2 gap-4"></div>
+                </div>
+
+                <!-- Delivery Address -->
+                <div>
+                    <h3 class="font-bold text-primary mb-3">Delivery Address</h3>
+                    <div id="modalAddressDisplay" class="text-sm text-secondary space-y-1"></div>
+                </div>
+
+                <!-- Price Summary -->
+                <div class="bg-light-cream rounded-lg p-4">
+                    <div class="flex justify-between mb-2 text-sm">
+                        <span class="text-secondary">Subtotal</span>
+                        <span class="font-medium text-primary">₹<span id="modalSubtotal">0</span></span>
+                    </div>
+                    <div class="flex justify-between text-sm pb-2 border-b border-outline-variant/30">
+                        <span class="text-secondary">Delivery</span>
+                        <span class="font-medium text-primary">₹<span id="modalDelivery">0</span></span>
+                    </div>
+                    <div class="flex justify-between font-bold text-primary mt-2">
+                        <span>Total</span>
+                        <span>₹<span id="modalTotal">0</span></span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3">
+                    <button onclick="reorderFromModal()" class="flex-1 px-4 py-3 bg-accent text-white font-medium rounded-lg hover:bg-primary transition">
+                        Reorder
+                    </button>
+                    <button onclick="downloadInvoice()" class="flex-1 px-4 py-3 border-2 border-accent text-accent font-medium rounded-lg hover:bg-light-cream transition">
+                        Download Invoice
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function isLoggedIn() {
+            return localStorage.getItem('userUID') !== null;
+        }
+
+        function requireLogin() {
+            if (!isLoggedIn()) {
+                location.href = 'login.html?redirect=order-history.html';
+                return false;
+            }
+            return true;
+        }
+
+        let allOrders = [];
+        let currentFilter = 'all';
+
+        // Sample order statuses
+        const statusSteps = {
+            'Pending': [true, false, false, false, false, false, false, false],
+            'Accepted': [true, true, false, false, false, false, false, false],
+            'Printing': [true, true, true, false, false, false, false, false],
+            'Packed': [true, true, true, true, false, false, false, false],
+            'Shipped': [true, true, true, true, true, true, false, false],
+            'Out for Delivery': [true, true, true, true, true, true, true, false],
+            'Delivered': [true, true, true, true, true, true, true, true],
+            'Cancelled': [true, false, false, false, false, false, false, false]
+        };
+
+        function loadOrders() {
+            const userUID = localStorage.getItem('userUID');
+            
+            // Load demo orders for now
+            const demoOrders = JSON.parse(localStorage.getItem('demoOrders') || '[]');
+            allOrders = demoOrders.filter(o => o.uid === userUID);
+            
+            renderOrders();
+        }
+
+        function filterOrders(filter) {
+            currentFilter = filter;
+            
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active', 'bg-primary', 'text-white');
+                tab.classList.add('text-secondary');
+            });
+            event.target.classList.add('active', 'bg-primary', 'text-white');
+            
+            renderOrders();
+        }
+
+        function renderOrders() {
+            const ordersList = document.getElementById('ordersList');
+            
+            let filteredOrders = allOrders;
+            
+            if (currentFilter === 'pending') {
+                filteredOrders = allOrders.filter(o => o.orderStatus === 'Pending');
+            } else if (currentFilter === 'processing') {
+                filteredOrders = allOrders.filter(o => 
+                    ['Accepted', 'Printing', 'Packed'].includes(o.orderStatus)
+                );
+            } else if (currentFilter === 'shipped') {
+                filteredOrders = allOrders.filter(o => 
+                    ['Shipped', 'Out for Delivery'].includes(o.orderStatus)
+                );
+            } else if (currentFilter === 'delivered') {
+                filteredOrders = allOrders.filter(o => o.orderStatus === 'Delivered');
+            }
+
+            if (filteredOrders.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="text-center py-12">
+                        <span class="material-symbols-outlined text-6xl text-secondary/20 block mb-4">shopping_cart</span>
+                        <p class="text-secondary">No ${currentFilter !== 'all' ? currentFilter + ' ' : ''}orders found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            ordersList.innerHTML = filteredOrders.map(order => `
+                <div class="order-card" onclick="openOrderModal('${order.orderId}')">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-bold text-primary">${order.orderId}</h3>
+                            <p class="text-xs text-secondary mt-1">${new Date(order.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <span class="status-badge status-${order.orderStatus.toLowerCase().replace(' ', '-')}">
+                            ${order.orderStatus}
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-3">
+                        <div>
+                            <div class="text-xs text-secondary">Category</div>
+                            <div class="text-sm font-medium text-primary">${order.category}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-secondary">Pages</div>
+                            <div class="text-sm font-medium text-primary">${order.pages}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-secondary">Amount</div>
+                            <div class="text-sm font-bold text-accent">₹${order.totalAmount}</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-steps">
+                        ${statusSteps[order.orderStatus].map((completed, i) => 
+                            `<div class="progress-step ${completed ? 'completed' : ''}"></div>`
+                        ).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openOrderModal(orderId) {
+            const order = allOrders.find(o => o.orderId === orderId);
+            if (!order) return;
+
+            document.getElementById('modalOrderId').textContent = order.orderId;
+            document.getElementById('modalOrderStatus').textContent = order.orderStatus;
+            document.getElementById('modalOrderStatus').className = `status-badge status-${order.orderStatus.toLowerCase().replace(' ', '-')}`;
+            document.getElementById('modalOrderDate').textContent = new Date(order.createdAt).toLocaleDateString();
+
+            // Files
+            const filesHtml = order.files.map(f => 
+                `<div class="flex justify-between text-sm"><span>${f.name || 'File'}</span><span class="text-secondary">${f.pages || 0} pages</span></div>`
+            ).join('');
+            document.getElementById('modalFilesList').innerHTML = filesHtml;
+
+            // Settings
+            const settings = order.printSettings || {};
+            document.getElementById('modalSettingsList').innerHTML = `
+                <div><span class="text-xs text-secondary">Size</span><div class="font-medium text-primary">${settings.paperSize || 'A4'}</div></div>
+                <div><span class="text-xs text-secondary">Type</span><div class="font-medium text-primary">${settings.printType || 'B/W'}</div></div>
+                <div><span class="text-xs text-secondary">Quality</span><div class="font-medium text-primary">${settings.paperQuality || '80 GSM'}</div></div>
+                <div><span class="text-xs text-secondary">Binding</span><div class="font-medium text-primary">${settings.binding || 'None'}</div></div>
+            `;
+
+            // Address
+            const addr = order.address || {};
+            document.getElementById('modalAddressDisplay').innerHTML = `
+                <div><strong>${addr.fullName}</strong></div>
+                <div>${addr.addressLine1}</div>
+                <div>${addr.city}, ${addr.state} ${addr.pincode}</div>
+                <div class="pt-2">📱 ${addr.mobileNumber}</div>
+            `;
+
+            // Price
+            document.getElementById('modalSubtotal').textContent = (order.totalAmount * 0.85).toFixed(2);
+            document.getElementById('modalDelivery').textContent = (order.deliveryType === 'express' ? '50.00' : '0.00');
+            document.getElementById('modalTotal').textContent = order.totalAmount.toFixed(2);
+
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        function reorderFromModal() {
+            alert('Reorder feature coming soon!');
+        }
+
+        function downloadInvoice() {
+            alert('Invoice download feature coming soon!');
+        }
+
+        window.addEventListener('load', () => {
+            if (!requireLogin()) return;
+            loadOrders();
+        });
+    </script>
+</body>
+</html>

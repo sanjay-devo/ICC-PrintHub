@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Upload & Order - ICC PrintHub</title>
+    <link rel="icon" href="https://indiacybercafe.com/wp-content/uploads/2026/06/ICC-PrintHub-Icon-logo.png" type="image/png"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "text-primary": "#472825",
+                        "text-secondary": "#96786F",
+                        "primary": "#472825",
+                        "secondary": "#96786F",
+                        "accent": "#D3AB80",
+                        "light-cream": "#FDE4BC",
+                        "background": "#FFF4E2",
+                        "surface": "#fff8f1",
+                        "outline": "#827472",
+                        "outline-variant": "#d4c2c0",
+                        "surface-container": "#f7eddb",
+                        "surface-container-high": "#f2e7d5",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "3xl": "32px",
+                        "full": "9999px"
+                    },
+                    "boxShadow": {
+                        "soft": "0 4px 16px rgba(71, 40, 37, 0.08)",
+                        "medium": "0 8px 24px rgba(71, 40, 37, 0.12)",
+                        "premium": "0 12px 32px rgba(71, 40, 37, 0.1)"
+                    }
+                },
+            }
+        };
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #FFF4E2 0%, #FDE4BC 100%);
+            min-height: 100vh;
+        }
+        
+        .category-card {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(71, 40, 37, 0.15);
+        }
+        
+        .category-icon {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #D3AB80 0%, #96786F 100%);
+            margin-bottom: 16px;
+        }
+        
+        .category-icon span {
+            font-size: 32px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 48px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #96786F;
+        }
+        
+        .step.active {
+            color: #472825;
+        }
+        
+        .step-number {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #FDE4BC;
+            border: 2px solid #D3AB80;
+            font-weight: 700;
+        }
+        
+        .step.active .step-number {
+            background: #472825;
+            color: white;
+            border-color: #472825;
+        }
+        
+        .step-connector {
+            width: 32px;
+            height: 2px;
+            background: #D3AB80;
+        }
+        
+        .step.active ~ .step-connector,
+        .step.active .step-connector {
+            background: #472825;
+        }
+        
+        @media (max-width: 768px) {
+            .category-card {
+                min-height: 200px;
+            }
+            
+            .stepper {
+                gap: 8px;
+                margin-bottom: 32px;
+            }
+            
+            .step {
+                font-size: 11px;
+            }
+            
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            
+            .step-connector {
+                width: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-soft">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <img src="https://indiacybercafe.com/wp-content/uploads/2026/06/ICC-PrintHub-Icon-logo.png" alt="ICC PrintHub" class="w-10 h-10">
+                <span class="text-xl font-bold text-primary hidden sm:inline">ICC PrintHub</span>
+            </div>
+            <nav class="flex items-center gap-6">
+                <a href="index.html" class="text-sm font-medium text-secondary hover:text-primary transition">Home</a>
+                <a href="index.html#services" class="text-sm font-medium text-secondary hover:text-primary transition">Services</a>
+                <button id="profileBtn" onclick="if(requireLogin()) location.href='profile.html'" class="px-4 py-2 rounded-lg bg-accent text-white font-medium hover:bg-primary transition">
+                    <span class="material-symbols-outlined align-middle inline text-lg">account_circle</span>
+                    <span class="hidden sm:inline ml-2">Profile</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 py-12">
+        <!-- Progress Stepper -->
+        <div class="stepper">
+            <div class="step active">
+                <div class="step-number">1</div>
+                <span>Upload</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <span>Settings</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <span>Checkout</span>
+            </div>
+        </div>
+
+        <!-- Page Title -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-3">What do you want to print?</h1>
+            <p class="text-lg text-secondary">Choose a category and upload your files. We'll take care of the rest.</p>
+        </div>
+
+        <!-- Category Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            
+            <!-- PDF Files -->
+            <div class="category-card bg-white rounded-3xl p-8 shadow-soft border border-outline-variant/20 flex flex-col items-center justify-center text-center cursor-pointer" onclick="goToUpload('pdf')">
+                <div class="category-icon">
+                    <span class="material-symbols-outlined">description</span>
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">PDF Files</h3>
+                <p class="text-sm text-secondary">Upload and print PDFs with custom settings</p>
+            </div>
+
+            <!-- Photos -->
+            <div class="category-card bg-white rounded-3xl p-8 shadow-soft border border-outline-variant/20 flex flex-col items-center justify-center text-center cursor-pointer" onclick="goToUpload('photos')">
+                <div class="category-icon">
+                    <span class="material-symbols-outlined">image</span>
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">Photos</h3>
+                <p class="text-sm text-secondary">Print your memories in premium quality</p>
+            </div>
+
+            <!-- Documents -->
+            <div class="category-card bg-white rounded-3xl p-8 shadow-soft border border-outline-variant/20 flex flex-col items-center justify-center text-center cursor-pointer" onclick="goToUpload('documents')">
+                <div class="category-icon">
+                    <span class="material-symbols-outlined">note</span>
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">Documents</h3>
+                <p class="text-sm text-secondary">Word, Text files made print-ready</p>
+            </div>
+
+            <!-- Scan & Print -->
+            <div class="category-card bg-white rounded-3xl p-8 shadow-soft border border-outline-variant/20 flex flex-col items-center justify-center text-center cursor-pointer" onclick="goToUpload('scan-print')">
+                <div class="category-icon">
+                    <span class="material-symbols-outlined">scanner</span>
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">Scan & Print</h3>
+                <p class="text-sm text-secondary">Scan documents directly from device</p>
+            </div>
+
+            <!-- Excel -->
+            <div class="category-card bg-white rounded-3xl p-8 shadow-soft border border-outline-variant/20 flex flex-col items-center justify-center text-center cursor-pointer" onclick="goToUpload('excel')">
+                <div class="category-icon">
+                    <span class="material-symbols-outlined">table_chart</span>
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">Excel</h3>
+                <p class="text-sm text-secondary">Spreadsheets with perfect formatting</p>
+            </div>
+
+            <!-- Presentation -->
+            <div class="category-card bg-white rounded-3xl p-8 shadow-soft border border-outline-variant/20 flex flex-col items-center justify-center text-center cursor-pointer" onclick="goToUpload('presentation')">
+                <div class="category-icon">
+                    <span class="material-symbols-outlined">slideshow</span>
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">Presentation</h3>
+                <p class="text-sm text-secondary">PowerPoint slides in print layouts</p>
+            </div>
+
+            <!-- ID Cards -->
+            <div class="category-card bg-white rounded-3xl p-8 shadow-soft border border-outline-variant/20 flex flex-col items-center justify-center text-center cursor-pointer" onclick="goToUpload('id-cards')">
+                <div class="category-icon">
+                    <span class="material-symbols-outlined">credit_card</span>
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">ID Cards</h3>
+                <p class="text-sm text-secondary">Official ID card printing services</p>
+            </div>
+
+            <!-- Study Notes -->
+            <div class="category-card bg-white rounded-3xl p-8 shadow-soft border border-outline-variant/20 flex flex-col items-center justify-center text-center cursor-pointer" onclick="goToUpload('study-notes')">
+                <div class="category-icon">
+                    <span class="material-symbols-outlined">notebook_2</span>
+                </div>
+                <h3 class="text-xl font-bold text-primary mb-2">Study Notes</h3>
+                <p class="text-sm text-secondary">Student-friendly bulk printing</p>
+                <span class="text-xs font-bold text-accent mt-2">💰 Best Prices</span>
+            </div>
+
+        </div>
+
+        <!-- Info Section -->
+        <div class="bg-white rounded-2xl p-8 shadow-soft border border-outline-variant/20">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-accent mb-2">📦</div>
+                    <h3 class="text-lg font-bold text-primary mb-1">Fast Delivery</h3>
+                    <p class="text-sm text-secondary">Delivered within 2-3 business days to your address</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-accent mb-2">💎</div>
+                    <h3 class="text-lg font-bold text-primary mb-1">Premium Quality</h3>
+                    <p class="text-sm text-secondary">Professional printing with premium paper options</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-accent mb-2">🔒</div>
+                    <h3 class="text-lg font-bold text-primary mb-1">Secure</h3>
+                    <p class="text-sm text-secondary">Your files and data are completely secure</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Authentication helpers
+        function isLoggedIn() {
+            return localStorage.getItem('userUID') !== null;
+        }
+
+        function requireLogin() {
+            if (!isLoggedIn()) {
+                location.href = 'login.html?redirect=upload.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Navigation
+        function goToUpload(category) {
+            if (!requireLogin()) return;
+            
+            // Store current category
+            sessionStorage.setItem('uploadCategory', category);
+            
+            // Redirect to category upload page
+            const categoryMap = {
+                'pdf': 'upload-pdf.html',
+                'photos': 'upload-photos.html',
+                'documents': 'upload-documents.html',
+                'scan-print': 'upload-scan-print.html',
+                'excel': 'upload-excel.html',
+                'presentation': 'upload-presentation.html',
+                'id-cards': 'upload-id-cards.html',
+                'study-notes': 'upload-study-notes.html'
+            };
+            
+            if (categoryMap[category]) {
+                location.href = categoryMap[category];
+            }
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            if (!requireLogin()) {
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

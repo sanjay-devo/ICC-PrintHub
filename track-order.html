@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Track Order - ICC PrintHub</title>
+    <link rel="icon" href="https://indiacybercafe.com/wp-content/uploads/2026/06/ICC-PrintHub-Icon-logo.png" type="image/png"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "text-primary": "#472825",
+                        "text-secondary": "#96786F",
+                        "primary": "#472825",
+                        "secondary": "#96786F",
+                        "accent": "#D3AB80",
+                        "light-cream": "#FDE4BC",
+                        "background": "#FFF4E2",
+                    },
+                },
+            }
+        };
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFF4E2 0%, #FDE4BC 100%);
+            min-height: 100vh;
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            background: #D3AB80;
+            border: 3px solid white;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+            margin-top: 8px;
+        }
+        
+        .timeline-item.completed .timeline-dot {
+            background: #4CAF50;
+        }
+        
+        .timeline-item.current .timeline-dot {
+            background: #472825;
+            width: 16px;
+            height: 16px;
+            margin-top: 6px;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 5px;
+            top: 30px;
+            bottom: -30px;
+            width: 2px;
+            background: #E0E0E0;
+        }
+        
+        .timeline-item.completed .timeline-line {
+            background: #4CAF50;
+        }
+        
+        .timeline-item:last-child .timeline-line {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="p-2 hover:bg-light-cream rounded-lg transition">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </a>
+                <h1 class="font-bold text-primary">Track Order</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        
+        <!-- Search Section -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+            <h2 class="text-2xl font-bold text-primary mb-4">Track Your Order</h2>
+            <div class="flex gap-3">
+                <input type="text" id="orderIdInput" placeholder="Enter Order ID (e.g., ICC123456789)" 
+                    class="flex-1 px-4 py-3 border-2 border-outline-variant rounded-lg focus:outline-none focus:border-primary">
+                <button onclick="searchOrder()" class="px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition">
+                    <span class="material-symbols-outlined align-middle">search</span> Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Order Details Section -->
+        <div id="orderDetails" style="display: none;">
+            
+            <!-- Order Header -->
+            <div class="bg-white rounded-2xl p-8 shadow-sm mb-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 id="detailOrderId" class="text-2xl font-bold text-primary">Order #</h2>
+                        <p id="detailOrderDate" class="text-sm text-secondary mt-1">--</p>
+                    </div>
+                    <div id="detailStatus" class="text-center">
+                        <div class="text-3xl font-bold text-primary">%</div>
+                        <div class="text-xs text-secondary mt-1">Progress</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <div class="text-xs text-secondary">Category</div>
+                        <div id="detailCategory" class="text-lg font-bold text-primary">PDF</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-secondary">Pages</div>
+                        <div id="detailPages" class="text-lg font-bold text-primary">0</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-secondary">Amount</div>
+                        <div id="detailAmount" class="text-lg font-bold text-accent">₹0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="bg-white rounded-2xl p-8 shadow-sm mb-6">
+                <h3 class="text-lg font-bold text-primary mb-6">Order Timeline</h3>
+                <div class="timeline" id="timeline"></div>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="bg-white rounded-2xl p-8 shadow-sm">
+                <h3 class="text-lg font-bold text-primary mb-4">Delivery Address</h3>
+                <div id="detailAddress" class="text-secondary space-y-1"></div>
+            </div>
+
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="text-center py-12">
+            <span class="material-symbols-outlined text-6xl text-secondary/20 block mb-4">search</span>
+            <p class="text-secondary">Enter an Order ID to track your order</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" style="display: none;" class="bg-red-50 border-2 border-red-200 rounded-lg p-6 text-center">
+            <span class="material-symbols-outlined text-4xl text-red-500 block mb-2">error</span>
+            <p class="text-red-700">Order not found. Please check your Order ID.</p>
+        </div>
+
+    </main>
+
+    <script>
+        const timelineSteps = [
+            { label: 'Order Placed', icon: 'shopping_cart' },
+            { label: 'Order Accepted', icon: 'done' },
+            { label: 'Printing', icon: 'print' },
+            { label: 'Packed', icon: 'inventory_2' },
+            { label: 'Shipped', icon: 'local_shipping' },
+            { label: 'Out for Delivery', icon: 'delivery_dining' },
+            { label: 'Delivered', icon: 'check_circle' }
+        ];
+
+        const statusToProgress = {
+            'Pending': 15,
+            'Accepted': 25,
+            'Printing': 40,
+            'Packed': 55,
+            'Shipped': 70,
+            'Out for Delivery': 85,
+            'Delivered': 100,
+            'Cancelled': 0
+        };
+
+        function searchOrder() {
+            const orderId = document.getElementById('orderIdInput').value.trim();
+            if (!orderId) {
+                alert('Please enter an Order ID');
+                return;
+            }
+
+            // Get order from demo storage
+            const orders = JSON.parse(localStorage.getItem('demoOrders') || '[]');
+            const order = orders.find(o => o.orderId === orderId);
+
+            if (!order) {
+                document.getElementById('orderDetails').style.display = 'none';
+                document.getElementById('noResults').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+
+            displayOrder(order);
+        }
+
+        function displayOrder(order) {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('noResults').style.display = 'none';
+            document.getElementById('orderDetails').style.display = 'block';
+
+            // Header info
+            document.getElementById('detailOrderId').textContent = 'Order ' + order.orderId;
+            document.getElementById('detailOrderDate').textContent = new Date(order.createdAt).toLocaleDateString('en-IN', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            document.getElementById('detailCategory').textContent = order.category;
+            document.getElementById('detailPages').textContent = order.pages;
+            document.getElementById('detailAmount').textContent = '₹' + order.totalAmount;
+            
+            const progress = statusToProgress[order.orderStatus] || 0;
+            document.getElementById('detailStatus').innerHTML = `
+                <div class="text-3xl font-bold text-primary">${progress}%</div>
+                <div class="text-xs text-secondary mt-1">Progress</div>
+            `;
+
+            // Timeline
+            const currentStatusIndex = ['Pending', 'Accepted', 'Printing', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'].indexOf(order.orderStatus);
+            
+            const timelineHtml = timelineSteps.map((step, index) => {
+                let className = 'timeline-item';
+                if (index < currentStatusIndex) className += ' completed';
+                if (index === currentStatusIndex) className += ' current';
+
+                return `
+                    <div class="${className}">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-dot"></div>
+                        <div class="flex-1 pt-1">
+                            <div class="font-bold text-primary">${step.label}</div>
+                            <div class="text-xs text-secondary">${index < currentStatusIndex ? 'Completed' : index === currentStatusIndex ? 'In Progress' : 'Pending'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('timeline').innerHTML = timelineHtml;
+
+            // Address
+            const addr = order.address || {};
+            document.getElementById('detailAddress').innerHTML = `
+                <div class="font-bold text-primary">${addr.fullName}</div>
+                <div>${addr.addressLine1}</div>
+                ${addr.addressLine2 ? `<div>${addr.addressLine2}</div>` : ''}
+                <div>${addr.city}, ${addr.state} ${addr.pincode}</div>
+                <div class="pt-3">
+                    <div class="text-xs text-secondary">Contact</div>
+                    <div class="font-medium text-primary">📱 ${addr.mobileNumber}</div>
+                    ${addr.emailAddress ? `<div class="font-medium text-primary">📧 ${addr.emailAddress}</div>` : ''}
+                </div>
+            `;
+        }
+
+        // Check URL params for Order ID
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('id');
+            if (orderId) {
+                document.getElementById('orderIdInput').value = orderId;
+                searchOrder();
+            }
+        });
+
+        // Enter key support
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && e.target.id === 'orderIdInput') {
+                searchOrder();
+            }
+        });
+    </script>
+</body>
+</html>

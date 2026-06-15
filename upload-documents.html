@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Upload Documents - ICC PrintHub</title>
+    <link rel="icon" href="https://indiacybercafe.com/wp-content/uploads/2026/06/ICC-PrintHub-Icon-logo.png" type="image/png"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "text-primary": "#472825",
+                        "text-secondary": "#96786F",
+                        "primary": "#472825",
+                        "secondary": "#96786F",
+                        "accent": "#D3AB80",
+                        "light-cream": "#FDE4BC",
+                        "background": "#FFF4E2",
+                    },
+                },
+            }
+        };
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFF4E2 0%, #FDE4BC 100%);
+            min-height: 100vh;
+        }
+        
+        .upload-area {
+            border: 3px dashed #D3AB80;
+            border-radius: 20px;
+            padding: 48px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(253, 228, 188, 0.3);
+        }
+        
+        .upload-area:hover {
+            border-color: #472825;
+            background: rgba(211, 171, 128, 0.1);
+        }
+        
+        .upload-area.dragover {
+            border-color: #472825;
+            background: rgba(71, 40, 37, 0.05);
+            transform: scale(1.02);
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <button onclick="history.back()" class="p-2 hover:bg-light-cream rounded-lg transition">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div>
+                    <h1 class="font-bold text-primary">Upload Documents</h1>
+                    <p class="text-xs text-secondary">Step 1 of 3</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Upload Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl p-8 shadow-sm">
+                    
+                    <!-- Upload Area -->
+                    <div id="uploadArea" class="upload-area" onclick="document.getElementById('fileInput').click()">
+                        <div class="mb-4">
+                            <span class="material-symbols-outlined text-6xl text-accent block mb-4">upload_file</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-primary mb-2">Drag & drop your documents here</h3>
+                        <p class="text-sm text-secondary">or click to browse files</p>
+                        <p class="text-xs text-secondary mt-4">Supported: DOC, DOCX, TXT • Max 25MB per file</p>
+                    </div>
+
+                    <input type="file" id="fileInput" accept=".doc,.docx,.txt" multiple style="display: none;" onchange="handleFileSelect(event)">
+
+                    <!-- Files List -->
+                    <div id="filesList" class="mt-8"></div>
+
+                    <!-- Add More Button -->
+                    <button onclick="document.getElementById('fileInput').click()" class="mt-6 w-full px-6 py-3 border-2 border-accent text-accent font-medium rounded-lg hover:bg-light-cream transition">
+                        <span class="material-symbols-outlined align-middle text-xl">add</span> Add More Files
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- Order Summary (Sticky) -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl p-6 shadow-sm sticky top-24">
+                    <h3 class="text-lg font-bold text-primary mb-4">Order Summary</h3>
+                    
+                    <div class="space-y-3 pb-4 border-b border-outline-variant/30">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-secondary">Files</span>
+                            <span class="font-medium text-primary" id="fileCount">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="bg-light-cream rounded-lg p-4 mb-6 mt-6">
+                        <div class="text-xs text-secondary mb-2">Estimated Price</div>
+                        <div class="text-3xl font-bold text-primary">₹<span id="totalPrice">0</span></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button onclick="continueToSettings()" id="continueBtn" disabled class="w-full px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed mb-3">
+                        Continue
+                    </button>
+                    <button onclick="history.back()" class="w-full px-6 py-3 border-2 border-accent text-accent font-medium rounded-lg hover:bg-light-cream transition">
+                        Back
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Firebase Config & Utilities -->
+    <script src="firebase-utils.js"></script>
+    <script>
+        function isLoggedIn() {
+            return localStorage.getItem('userUID') !== null;
+        }
+
+        function requireLogin() {
+            if (!isLoggedIn()) {
+                location.href = 'login.html?redirect=upload.html';
+                return false;
+            }
+            return true;
+        }
+
+        let uploadedFiles = [];
+
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFileSelect(event) {
+            handleFiles(event.target.files);
+            event.target.value = '';
+        }
+
+        function handleFiles(files) {
+            for (let file of files) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!['doc', 'docx', 'txt'].includes(ext)) {
+                    alert('Only DOC, DOCX, and TXT files are supported');
+                    continue;
+                }
+
+                if (file.size > 25 * 1024 * 1024) {
+                    alert(`File ${file.name} is too large (max 25MB)`);
+                    continue;
+                }
+
+                uploadedFiles.push({
+                    name: file.name,
+                    size: file.size,
+                    file: file,
+                    id: Date.now() + Math.random()
+                });
+            }
+
+            renderFiles();
+            updateSummary();
+        }
+
+        function renderFiles() {
+            const filesList = document.getElementById('filesList');
+            filesList.innerHTML = '';
+
+            uploadedFiles.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="flex-1">
+                        <div class="font-medium text-primary text-sm">${file.name}</div>
+                        <div class="text-xs text-secondary mt-1">${(file.size / 1024 / 1024).toFixed(2)}MB</div>
+                    </div>
+                    <button onclick="removeFile('${file.id}')" class="p-2 hover:bg-light-cream rounded-lg transition">
+                        <span class="material-symbols-outlined text-accent">close</span>
+                    </button>
+                `;
+                filesList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(id) {
+            uploadedFiles = uploadedFiles.filter(f => f.id !== id);
+            renderFiles();
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const fileCount = uploadedFiles.length;
+            document.getElementById('fileCount').textContent = fileCount;
+
+            // Estimate 10 pages per document and calculate price
+            const estimatedPages = fileCount * 10;
+            const price = estimatedPages * 0.50;
+            document.getElementById('totalPrice').textContent = price.toFixed(2);
+
+            document.getElementById('continueBtn').disabled = fileCount === 0;
+        }
+
+        function continueToSettings() {
+            if (uploadedFiles.length === 0) return;
+
+            // Store File objects globally (survives page navigation)
+            const filesToUpload = uploadedFiles.map(f => ({
+                name: f.name,
+                type: f.type || 'application/octet-stream',
+                size: f.size,
+                file: f.file
+            }));
+            window.globalFileStore = filesToUpload;
+            window.uploadedFilesCache = filesToUpload;
+            console.log('✓ Files stored globally:', filesToUpload.length);
+
+            // Store metadata in sessionStorage (persists across page navigation)
+            const filesMetadata = uploadedFiles.map(f => ({
+                name: f.name,
+                pages: 10,
+                size: f.size,
+                type: f.type || 'application/octet-stream'
+            }));
+            sessionStorage.setItem('uploadFiles', JSON.stringify(filesMetadata));
+            sessionStorage.setItem('uploadCategory', 'Documents');
+            
+            console.log('✓ Files stored in sessionStorage:', filesMetadata.length);
+
+            // Store file binary data
+            const fileDataPromises = uploadedFiles.map(f => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        resolve({
+                            name: f.name,
+                            dataUrl: e.target.result,
+                            type: f.type || 'application/octet-stream',
+                            size: f.size
+                        });
+                    };
+                    reader.readAsArrayBuffer(f.file);
+                });
+            });
+
+            Promise.all(fileDataPromises).then(fileDataArray => {
+                sessionStorage.setItem('uploadFilesData', JSON.stringify(
+                    fileDataArray.map(fd => ({
+                        name: fd.name,
+                        type: fd.type,
+                        size: fd.size,
+                        data: Array.from(new Uint8Array(fd.dataUrl))
+                    }))
+                ));
+                console.log('✓ File data stored in sessionStorage');
+                location.href = 'upload-settings.html';
+            });
+        }
+
+        window.addEventListener('load', () => {
+            if (!requireLogin()) return;
+        });
+    </script>
+</body>
+</html>

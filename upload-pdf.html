@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Upload PDF - ICC PrintHub</title>
+    <link rel="icon" href="https://indiacybercafe.com/wp-content/uploads/2026/06/ICC-PrintHub-Icon-logo.png" type="image/png"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "text-primary": "#472825",
+                        "text-secondary": "#96786F",
+                        "primary": "#472825",
+                        "secondary": "#96786F",
+                        "accent": "#D3AB80",
+                        "light-cream": "#FDE4BC",
+                        "background": "#FFF4E2",
+                    },
+                },
+            }
+        };
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFF4E2 0%, #FDE4BC 100%);
+            min-height: 100vh;
+        }
+        
+        .upload-area {
+            border: 3px dashed #D3AB80;
+            border-radius: 20px;
+            padding: 48px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(253, 228, 188, 0.3);
+        }
+        
+        .upload-area:hover {
+            border-color: #472825;
+            background: rgba(211, 171, 128, 0.1);
+        }
+        
+        .upload-area.dragover {
+            border-color: #472825;
+            background: rgba(71, 40, 37, 0.05);
+            transform: scale(1.02);
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .file-preview {
+            width: 120px;
+            height: 150px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-right: 12px;
+        }
+        
+        .pdf-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <button onclick="history.back()" class="p-2 hover:bg-light-cream rounded-lg transition">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div>
+                    <h1 class="font-bold text-primary">Upload PDF</h1>
+                    <p class="text-xs text-secondary">Step 1 of 3</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Upload Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl p-8 shadow-sm">
+                    
+                    <!-- Upload Area -->
+                    <div id="uploadArea" class="upload-area" onclick="document.getElementById('fileInput').click()">
+                        <div class="mb-4">
+                            <span class="material-symbols-outlined text-6xl text-accent block mb-4">cloud_upload</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-primary mb-2">Drag & drop your PDFs here</h3>
+                        <p class="text-sm text-secondary">or click to browse files</p>
+                        <p class="text-xs text-secondary mt-4">Supported: PDF • Max 50MB per file</p>
+                    </div>
+
+                    <input type="file" id="fileInput" accept=".pdf" multiple style="display: none;" onchange="handleFileSelect(event)">
+
+                    <!-- Files List -->
+                    <div id="filesList" class="mt-8">
+                        <!-- Files will be added here -->
+                    </div>
+
+                    <!-- Add More Button -->
+                    <button onclick="document.getElementById('fileInput').click()" class="mt-6 w-full px-6 py-3 border-2 border-accent text-accent font-medium rounded-lg hover:bg-light-cream transition">
+                        <span class="material-symbols-outlined align-middle text-xl">add</span> Add More Files
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- Order Summary (Sticky) -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl p-6 shadow-sm sticky top-24">
+                    <h3 class="text-lg font-bold text-primary mb-4">Order Summary</h3>
+                    
+                    <div class="space-y-3 pb-4 border-b border-outline-variant/30">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-secondary">Files</span>
+                            <span class="font-medium text-primary" id="fileCount">0</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-secondary">Total Pages</span>
+                            <span class="font-medium text-primary" id="pageCount">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Print Settings Preview -->
+                    <div class="mt-4 space-y-2 mb-6">
+                        <div class="text-xs text-secondary mb-3">Preview Settings</div>
+                        <div class="text-sm">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-secondary">Size:</span>
+                                <span id="sizePreview" class="font-medium text-primary">A4</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-secondary">Type:</span>
+                                <span id="typePreview" class="font-medium text-primary">B/W</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-secondary">Copies:</span>
+                                <span id="copiesPreview" class="font-medium text-primary">1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="bg-light-cream rounded-lg p-4 mb-6">
+                        <div class="text-xs text-secondary mb-2">Estimated Price</div>
+                        <div class="text-3xl font-bold text-primary">₹<span id="totalPrice">0</span></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button onclick="continueToSettings()" id="continueBtn" disabled class="w-full px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        Continue
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Firebase Config & Utilities -->
+    <script src="firebase-utils.js"></script>
+    <script>
+        // Set PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Authentication
+        function isLoggedIn() {
+            return localStorage.getItem('userUID') !== null;
+        }
+
+        function requireLogin() {
+            if (!isLoggedIn()) {
+                location.href = 'login.html?redirect=upload.html';
+                return false;
+            }
+            return true;
+        }
+
+        let uploadedFiles = [];
+
+        // Handle drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            handleFiles(event.target.files);
+            // Reset input
+            event.target.value = '';
+        }
+
+        async function handleFiles(files) {
+            for (let file of files) {
+                if (file.type !== 'application/pdf') {
+                    alert('Only PDF files are supported');
+                    continue;
+                }
+
+                if (file.size > 50 * 1024 * 1024) {
+                    alert(`File ${file.name} is too large (max 50MB)`);
+                    continue;
+                }
+
+                // Get page count
+                const pageCount = await getPDFPageCount(file);
+                
+                uploadedFiles.push({
+                    name: file.name,
+                    size: file.size,
+                    pages: pageCount,
+                    file: file,
+                    id: Date.now() + Math.random()
+                });
+            }
+
+            renderFiles();
+            updateSummary();
+        }
+
+        async function getPDFPageCount(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                return pdf.numPages;
+            } catch (e) {
+                console.error('Error reading PDF:', e);
+                return 0;
+            }
+        }
+
+        function renderFiles() {
+            const filesList = document.getElementById('filesList');
+            filesList.innerHTML = '';
+
+            uploadedFiles.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="flex-1">
+                        <div class="font-medium text-primary text-sm">${file.name}</div>
+                        <div class="text-xs text-secondary mt-1">${file.pages} pages • ${(file.size / 1024 / 1024).toFixed(2)}MB</div>
+                    </div>
+                    <button onclick="removeFile('${file.id}')" class="p-2 hover:bg-light-cream rounded-lg transition">
+                        <span class="material-symbols-outlined text-accent">close</span>
+                    </button>
+                `;
+                filesList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(id) {
+            uploadedFiles = uploadedFiles.filter(f => f.id !== id);
+            renderFiles();
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const totalPages = uploadedFiles.reduce((sum, f) => sum + f.pages, 0);
+            const fileCount = uploadedFiles.length;
+
+            document.getElementById('fileCount').textContent = fileCount;
+            document.getElementById('pageCount').textContent = totalPages;
+
+            // Calculate price (B/W @ ₹0.50 per page)
+            const price = totalPages * 0.50;
+            document.getElementById('totalPrice').textContent = price.toFixed(2);
+
+            document.getElementById('continueBtn').disabled = fileCount === 0;
+        }
+
+        function continueToSettings() {
+            if (uploadedFiles.length === 0) return;
+
+            // Store File objects for Firebase upload (using a trick: store in window + sessionStorage)
+            const filesToUpload = uploadedFiles.map(f => ({
+                name: f.name,
+                type: f.type || 'application/pdf',
+                size: f.size,
+                file: f.file  // Keep actual File object
+            }));
+            
+            // Store globally in window (will survive within this session while page is open)
+            window.globalFileStore = filesToUpload;
+            window.uploadedFilesCache = filesToUpload;
+            console.log('✓ Files stored globally:', filesToUpload.length);
+            console.log('✓ Files ready for upload:', filesToUpload.map(f => f.name));
+
+            // Store metadata in sessionStorage (persists across page navigation)
+            const filesMetadata = uploadedFiles.map(f => ({
+                name: f.name,
+                pages: f.pages,
+                size: f.size,
+                type: f.type || 'application/pdf'
+            }));
+            sessionStorage.setItem('uploadFiles', JSON.stringify(filesMetadata));
+            sessionStorage.setItem('uploadCategory', 'PDF');
+            
+            // CRITICAL: Also store file blobs as data URLs in sessionStorage for page navigation
+            const fileDataPromises = uploadedFiles.map(f => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        resolve({
+                            name: f.name,
+                            dataUrl: e.target.result,
+                            type: f.type || 'application/pdf',
+                            size: f.size
+                        });
+                    };
+                    reader.readAsArrayBuffer(f.file);
+                });
+            });
+
+            Promise.all(fileDataPromises).then(fileDataArray => {
+                // Store file binary data as JSON
+                sessionStorage.setItem('uploadFilesData', JSON.stringify(
+                    fileDataArray.map(fd => ({
+                        name: fd.name,
+                        type: fd.type,
+                        size: fd.size,
+                        data: Array.from(new Uint8Array(fd.dataUrl))  // Convert to array
+                    }))
+                ));
+                console.log('✓ File data stored in sessionStorage for page navigation');
+                
+                // NOW redirect after files are stored
+                location.href = 'upload-settings.html';
+            }).catch(err => {
+                console.error('Error storing files:', err);
+                alert('Error preparing files. Please try again.');
+            });
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            if (!requireLogin()) return;
+        });
+    </script>
+</body>
+</html>

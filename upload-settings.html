@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Print Settings - ICC PrintHub</title>
+    <link rel="icon" href="https://indiacybercafe.com/wp-content/uploads/2026/06/ICC-PrintHub-Icon-logo.png" type="image/png"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "text-primary": "#472825",
+                        "text-secondary": "#96786F",
+                        "primary": "#472825",
+                        "secondary": "#96786F",
+                        "accent": "#D3AB80",
+                        "light-cream": "#FDE4BC",
+                        "background": "#FFF4E2",
+                    },
+                },
+            }
+        };
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFF4E2 0%, #FDE4BC 100%);
+            min-height: 100vh;
+        }
+        
+        .option-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+        }
+        
+        .option-btn {
+            padding: 12px;
+            border: 2px solid #D3AB80;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+            color: #472825;
+        }
+        
+        .option-btn:hover {
+            border-color: #472825;
+        }
+        
+        .option-btn.active {
+            background: #472825;
+            color: white;
+            border-color: #472825;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <button onclick="history.back()" class="p-2 hover:bg-light-cream rounded-lg transition">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div>
+                    <h1 class="font-bold text-primary">Print Settings</h1>
+                    <p class="text-xs text-secondary">Step 2 of 3</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Settings Form -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl p-8 shadow-sm">
+                    
+                    <!-- Paper Size -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-primary mb-4">Paper Size</label>
+                        <div class="option-group">
+                            <button class="option-btn active" onclick="setSetting('paperSize', 'A4')">A4</button>
+                            <button class="option-btn" onclick="setSetting('paperSize', 'A3')">A3</button>
+                            <button class="option-btn" onclick="setSetting('paperSize', 'Legal')">Legal</button>
+                            <button class="option-btn" onclick="setSetting('paperSize', 'Letter')">Letter</button>
+                        </div>
+                    </div>
+
+                    <!-- Print Type -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-primary mb-4">Print Type</label>
+                        <div class="option-group">
+                            <button class="option-btn active" onclick="setSetting('printType', 'B/W')">Black & White</button>
+                            <button class="option-btn" onclick="setSetting('printType', 'Color')">Color</button>
+                        </div>
+                    </div>
+
+                    <!-- Print Side -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-primary mb-4">Print Side</label>
+                        <div class="option-group">
+                            <button class="option-btn active" onclick="setSetting('printSide', 'Single')">Single Side</button>
+                            <button class="option-btn" onclick="setSetting('printSide', 'Double')">Double Side</button>
+                        </div>
+                    </div>
+
+                    <!-- Paper Quality -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-primary mb-4">Paper Quality</label>
+                        <div class="option-group">
+                            <button class="option-btn active" onclick="setSetting('paperQuality', '70 GSM')">70 GSM</button>
+                            <button class="option-btn" onclick="setSetting('paperQuality', '75 GSM')">75 GSM</button>
+                            <button class="option-btn" onclick="setSetting('paperQuality', '80 GSM')">80 GSM</button>
+                            <button class="option-btn" onclick="setSetting('paperQuality', '100 GSM')">100 GSM</button>
+                        </div>
+                    </div>
+
+                    <!-- Orientation -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-primary mb-4">Orientation</label>
+                        <div class="option-group">
+                            <button class="option-btn active" onclick="setSetting('orientation', 'Portrait')">Portrait</button>
+                            <button class="option-btn" onclick="setSetting('orientation', 'Landscape')">Landscape</button>
+                        </div>
+                    </div>
+
+                    <!-- Copies -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-primary mb-4">Number of Copies</label>
+                        <div class="flex items-center gap-4">
+                            <button onclick="decreaseCopies()" class="p-2 border-2 border-accent rounded-lg hover:bg-light-cream transition">
+                                <span class="material-symbols-outlined text-lg">remove</span>
+                            </button>
+                            <input type="number" id="copiesInput" value="1" min="1" max="100" onchange="setCopies(this.value)" class="w-16 px-3 py-2 border-2 border-outline-variant rounded-lg text-center font-bold text-primary">
+                            <button onclick="increaseCopies()" class="p-2 border-2 border-accent rounded-lg hover:bg-light-cream transition">
+                                <span class="material-symbols-outlined text-lg">add</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Binding Options -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-primary mb-4">Binding</label>
+                        <div class="option-group">
+                            <button class="option-btn active" onclick="setSetting('binding', 'None')">None</button>
+                            <button class="option-btn" onclick="setSetting('binding', 'Spiral')">Spiral</button>
+                            <button class="option-btn" onclick="setSetting('binding', 'Staple')">Staple</button>
+                            <button class="option-btn" onclick="setSetting('binding', 'Hard')">Hard Binding</button>
+                        </div>
+                    </div>
+
+                    <!-- Extras -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-bold text-primary mb-4">Extras</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleExtra('transparentCover', this.checked)" class="w-4 h-4">
+                                <span class="text-sm text-primary">Transparent Cover (+₹10)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleExtra('backSheet', this.checked)" class="w-4 h-4">
+                                <span class="text-sm text-primary">Back Sheet (+₹5)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleExtra('lamination', this.checked)" class="w-4 h-4">
+                                <span class="text-sm text-primary">Lamination (+₹15)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Order Summary (Sticky) -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl p-6 shadow-sm sticky top-24">
+                    <h3 class="text-lg font-bold text-primary mb-4">Order Summary</h3>
+                    
+                    <div class="space-y-3 pb-4 border-b border-outline-variant/30 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-secondary">Total Pages</span>
+                            <span class="font-medium text-primary" id="totalPages">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-secondary">Copies</span>
+                            <span class="font-medium text-primary" id="copiesDisplay">1</span>
+                        </div>
+                    </div>
+
+                    <!-- Settings Display -->
+                    <div class="mt-4 space-y-2 mb-6 text-sm">
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs text-secondary mb-3">SETTINGS</div>
+                            <div class="flex justify-between">
+                                <span class="text-secondary">Size</span>
+                                <span id="displayPaperSize" class="font-medium text-primary">A4</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-secondary">Type</span>
+                                <span id="displayPrintType" class="font-medium text-primary">B/W</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-secondary">Quality</span>
+                                <span id="displayPaperQuality" class="font-medium text-primary">70 GSM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-secondary">Binding</span>
+                                <span id="displayBinding" class="font-medium text-primary">None</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Breakdown -->
+                    <div class="bg-light-cream rounded-lg p-4 mb-4 space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-secondary">Printing</span>
+                            <span class="font-medium text-primary">₹<span id="printingCost">0</span></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-secondary">Binding</span>
+                            <span class="font-medium text-primary">₹<span id="bindingCost">0</span></span>
+                        </div>
+                        <div class="flex justify-between" id="extrasCostDiv" style="display: none;">
+                            <span class="text-secondary">Extras</span>
+                            <span class="font-medium text-primary">₹<span id="extrasCost">0</span></span>
+                        </div>
+                        <hr class="border-outline-variant/30">
+                        <div class="flex justify-between font-bold text-primary">
+                            <span>Total</span>
+                            <span>₹<span id="totalCost">0</span></span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button onclick="continueToCheckout()" class="w-full px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition mb-3">
+                        Continue
+                    </button>
+                    <button onclick="history.back()" class="w-full px-6 py-3 border-2 border-accent text-accent font-medium rounded-lg hover:bg-light-cream transition">
+                        Back
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Settings state
+        const settings = {
+            paperSize: 'A4',
+            printType: 'B/W',
+            printSide: 'Single',
+            paperQuality: '70 GSM',
+            orientation: 'Portrait',
+            copies: 1,
+            binding: 'None',
+            extras: {
+                transparentCover: false,
+                backSheet: false,
+                lamination: false
+            }
+        };
+
+        let uploadedFiles = [];
+        let totalPages = 0;
+
+        // Pricing
+        const prices = {
+            'B/W': 0.50,
+            'Color': 3.00,
+            'Spiral': 35,
+            'Staple': 5,
+            'Hard': 50,
+            'transparentCover': 10,
+            'backSheet': 5,
+            'lamination': 15
+        };
+
+        function setSetting(key, value) {
+            settings[key] = value;
+            updateDisplay();
+            updateAllButtonStates();
+            calculatePrice();
+        }
+
+        function setCopies(value) {
+            const num = parseInt(value) || 1;
+            settings.copies = Math.max(1, Math.min(100, num));
+            document.getElementById('copiesInput').value = settings.copies;
+            calculatePrice();
+        }
+
+        function increaseCopies() {
+            setCopies(settings.copies + 1);
+        }
+
+        function decreaseCopies() {
+            setCopies(settings.copies - 1);
+        }
+
+        function toggleExtra(key, value) {
+            settings.extras[key] = value;
+            calculatePrice();
+        }
+
+        function updateDisplay() {
+            document.getElementById('displayPaperSize').textContent = settings.paperSize;
+            document.getElementById('displayPrintType').textContent = settings.printType;
+            document.getElementById('displayPaperQuality').textContent = settings.paperQuality;
+            document.getElementById('displayBinding').textContent = settings.binding;
+            document.getElementById('copiesDisplay').textContent = settings.copies;
+        }
+
+        function updateAllButtonStates() {
+            // Update button active states
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // This is simplified - in production you'd track which buttons go with which setting
+            const activeButtons = document.querySelectorAll(`.option-btn:contains("${settings.paperSize}"), .option-btn:contains("${settings.printType}")`);
+        }
+
+        function calculatePrice() {
+            // Determine page price based on paper size and print type
+            let pagePrice = 0;
+            
+            if (settings.printType === 'B/W') {
+                pagePrice = settings.paperSize === 'A3' ? 3.00 : 0.50; // A4/Legal/Letter = 0.50, A3 = 3.00
+            } else if (settings.printType === 'Color') {
+                pagePrice = settings.paperSize === 'A3' ? 10.00 : 5.00; // A4/Legal/Letter = 5.00, A3 = 10.00
+            }
+            
+            let printingCost = totalPages * pagePrice * settings.copies;
+            let bindingCost = prices[settings.binding] || 0;
+            let extrasCost = 0;
+
+            if (settings.extras.transparentCover) extrasCost += prices.transparentCover;
+            if (settings.extras.backSheet) extrasCost += prices.backSheet;
+            if (settings.extras.lamination) extrasCost += prices.lamination;
+
+            document.getElementById('printingCost').textContent = printingCost.toFixed(2);
+            document.getElementById('bindingCost').textContent = bindingCost.toFixed(2);
+            document.getElementById('extrasCost').textContent = extrasCost.toFixed(2);
+            
+            if (extrasCost > 0) {
+                document.getElementById('extrasCostDiv').style.display = 'flex';
+            } else {
+                document.getElementById('extrasCostDiv').style.display = 'none';
+            }
+
+            const subtotal = printingCost + bindingCost + extrasCost;
+            const gst = subtotal * 0.18; // 18% GST
+            const total = subtotal + gst;
+            
+            document.getElementById('totalCost').textContent = total.toFixed(2);
+            
+            // Save amount to sessionStorage for later use
+            sessionStorage.setItem('orderAmount', total.toFixed(2));
+        }
+
+        function continueToCheckout() {
+            // Store settings in sessionStorage
+            sessionStorage.setItem('printSettings', JSON.stringify(settings));
+            location.href = 'upload-address.html';
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            // Get uploaded files from sessionStorage
+            const filesData = sessionStorage.getItem('uploadFiles');
+            if (!filesData) {
+                // No files - redirect back to upload
+                location.href = 'upload.html';
+                return;
+            }
+            
+            uploadedFiles = JSON.parse(filesData);
+            totalPages = uploadedFiles.reduce((sum, f) => sum + (f.pages || 1), 0);
+            document.getElementById('totalPages').textContent = totalPages;
+            
+            // Load previous settings if they exist
+            const savedSettings = sessionStorage.getItem('printSettings');
+            if (savedSettings) {
+                const loaded = JSON.parse(savedSettings);
+                Object.assign(settings, loaded);
+                updateDisplay();
+            }
+            
+            calculatePrice();
+        });
+    </script>
+</body>
+</html>
